@@ -177,7 +177,8 @@ internal static class Tracker
         Revision++;
         Plugin.Log.LogInfo(
             $"Nivel {level.Number} terminado: extraído {level.ValueExtracted:0} de {level.ValueSpawned:0}, " +
-            $"perdido {level.ValueLost:0} ({level.ItemsDestroyed} destruidos)");
+            $"perdido {level.ValueLost:0} ({level.ItemsDestroyed} destruidos), restante {level.ValueRemaining:0}; " +
+            $"cuadre {level.ValueExtracted + level.ValueLost + level.ValueRemaining - level.ValueSpawned:+0;-0;0}");
     }
 
     // ───────────────────────── Eventos del juego ─────────────────────────
@@ -373,6 +374,7 @@ internal static class Tracker
             Surplus = valuable.name.IndexOf("surplus", StringComparison.OrdinalIgnoreCase) >= 0,
             Original = valuable.dollarValueOriginal,
         };
+        tracked.Last.Value = valuable.dollarValueCurrent;
         Valuables[id] = tracked;
 
         // La bolsa de excedente devuelve valor que ya se contó al extraer: no suma al botín del mapa.
@@ -561,6 +563,7 @@ internal static class Tracker
             }
             var physGrabObject = tracked.Obj.physGrabObject;
             if (!physGrabObject) continue;
+            TrackValueChanges(level, tracked);
             tracked.Last.Value = tracked.Obj.dollarValueCurrent;
             tracked.Last.Dead = physGrabObject.dead;
             tracked.Last.Y = physGrabObject.transform.position.y;
@@ -592,6 +595,28 @@ internal static class Tracker
             AddCarry(box.Carry, physGrabObject, dt);
         }
         if (gone != null) foreach (var id in gone) Boxes.Remove(id);
+    }
+
+    /// <summary>
+    /// Objetos que suben de valor después de aparecer: el Cubo del Conocimiento fija un valor nuevo al
+    /// terminar (y el juego sube el objetivo de botín en esa diferencia) y las curaciones devuelven valor
+    /// perdido. Sin esto, lo extraído más lo perdido superaría lo generado.
+    /// </summary>
+    private static void TrackValueChanges(LevelStats level, TrackedValuable tracked)
+    {
+        var original = tracked.Obj.dollarValueOriginal;
+        var current = tracked.Obj.dollarValueCurrent;
+        if (original > tracked.Original + 0.5f)
+        {
+            if (!tracked.Surplus) level.ValueSpawned += original - tracked.Original;
+            tracked.Original = original;
+            Revision++;
+        }
+        else if (current > tracked.Last.Value + 0.5f && !tracked.Surplus)
+        {
+            level.ValueSpawned += current - tracked.Last.Value;
+            Revision++;
+        }
     }
 
     private static void AddCarry(Dictionary<string, float> carry, PhysGrabObject physGrabObject, float dt)
@@ -652,7 +677,8 @@ internal static class Tracker
         var sum = 0f;
         foreach (var tracked in Valuables.Values)
         {
-            if (!tracked.Done && !tracked.Absorbed && tracked.Obj) sum += tracked.Obj.dollarValueCurrent;
+            // La bolsa de excedente devuelve valor ya contado como extraído: no es botín pendiente.
+            if (!tracked.Done && !tracked.Absorbed && !tracked.Surplus && tracked.Obj) sum += tracked.Obj.dollarValueCurrent;
         }
         foreach (var box in Boxes.Values)
         {
