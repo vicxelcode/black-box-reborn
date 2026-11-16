@@ -1,0 +1,35 @@
+# Paquete de Thunderstore. Fuente única de nombre, versión, dependencias y categorías:
+# scripts/package.sh lo construye con tcli y scripts/publish.sh lo sube.
+[config]
+schemaVersion = "0.0.1"
+
+[package]
+namespace = "vicxelcode"
+name = "BlackBoxReborn"
+versionNumber = "1.0.0"
+description = "Truck monitor and F6 stats panel: who broke what, who hauled what, value left on the map and a full run report. Client-side, works without the host."
+websiteUrl = ""
+containsNsfwContent = false
+
+[package.dependencies]
+BepInEx-BepInExPack = "5.4.2305"
+
+[build]
+icon = "./thunderstore/icon.png"
+readme = "./thunderstore/README.md"
+outdir = "./dist"
+
+[[build.copy]]
+source = "./bin/Release/BlackBoxReborn.dll"
+target = "BlackBoxReborn.dll"
+
+[[build.copy]]
+source = "./CHANGELOG.md"
+target = "CHANGELOG.md"
+
+[publish]
+repository = "https://thunderstore.io"
+communities = ["repo"]
+
+[publish.categories]
+repo = ["clientside", "quality-of-life", "mods"]
