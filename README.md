@@ -42,7 +42,7 @@ src/Stats/             modelo (nivel, jugador, partida) y Tracker
 src/Patches/           ganchos Harmony (solo leen; un fallo se registra y el juego sigue)
 src/UI/                panel F6, monitor del camión, HUD
 src/Dev/DevTools.cs    solo en Debug: control remoto para pruebas
-thunderstore/          manifest, README e icono del paquete
+thunderstore/          README e icono del paquete (el manifest lo genera tcli)
 ```
 
 ## Desarrollo

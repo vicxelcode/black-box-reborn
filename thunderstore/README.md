@@ -50,3 +50,7 @@ A rebuilt successor to the original BlackBox idea, written from scratch for the 
 - Not affiliated with semiwork. No game art is used.
 - Not affiliated with the original BlackBox by RoemisTeam; this mod contains none of its code or assets.
   You can uninstall the original BlackBox and its fixers.
+
+## Support
+
+If you enjoy the mod, you can [buy me a coffee](https://buymeacoffee.com/vicxelcode). Thanks!

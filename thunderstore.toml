@@ -8,7 +8,7 @@ namespace = "vicxelcode"
 name = "BlackBoxReborn"
 versionNumber = "1.0.0"
 description = "Truck monitor and F6 stats panel: who broke what, who hauled what, value left on the map and a full run report. Client-side, works without the host."
-websiteUrl = ""
+websiteUrl = "https://github.com/vicxelcode/black-box-reborn"
 containsNsfwContent = false
 
 [package.dependencies]
